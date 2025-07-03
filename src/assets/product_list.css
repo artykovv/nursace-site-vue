@@ -1,0 +1,48 @@
+.carousel_container {
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel_btn {
+    position: absolute !important;
+    top: 40%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 25px 0 rgba(0,0,0,.05);
+    color: #40474f;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.carousel_btn_prev {
+    left: 10px;
+}
+
+.carousel_btn_next {
+    right: 10px;
+}
+
+.carousel_btn:hover {
+    background: rgba(202, 202, 202, 0.7);
+}
+
+@media (max-width: 576px) {
+    .carousel_container {
+        padding: 0px !important;
+    }
+    .carousel_btn {
+        display: none !important;
+    }
+    .card-body h6 {
+        font-size: 14px;
+    }
+    #search-input {
+        background-color: rgb(230, 231, 234);
+        /* background-color: #cdb5a7; */
+        border-radius: 16px;
+        /* border: 2px solid #cdb5a7; */
+    }
+}
