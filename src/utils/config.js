@@ -1,4 +1,3 @@
 window.AppConfig = {
-    siteUrl: "http://127.0.0.1:8000"
-    // Добавьте сюда другие переменные, если нужно
+    siteUrl: "https://api.style-shoes.shop"
 }; 

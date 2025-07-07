@@ -77,6 +77,12 @@
           </div>
           <hr class="my-4">
           <button class="w-100 btn btn-primary btn-lg" type="submit" :disabled="loading">Продолжить оформление</button>
+          <div class="mt-3 text-center small text-muted">
+            Продолжая покупку, вы принимаете
+            <a href="/docs/userAgreement" target="_blank" rel="noopener noreferrer">Правила и условия</a>
+            и
+            <a href="/docs/privacyPolicy" target="_blank" rel="noopener noreferrer">Политика Конфиденциальности</a>
+          </div>
           <div v-if="status === 'success'" class="alert alert-success text-center mt-4">Заказ успешно оформлен!</div>
           <div v-if="status === 'fail'" class="alert alert-danger text-center mt-4">Ошибка оформления заказа. Попробуйте ещё раз.</div>
         </form>
