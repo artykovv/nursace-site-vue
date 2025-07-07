@@ -91,8 +91,8 @@ async function fetchProductName(productId) {
   }
 }
 
-async function fetchOrders(userId) {
-  const url = `${window.AppConfig.siteUrl}/orders/?user_id=${userId}`
+async function fetchOrders(sessionId) {
+  const url = `${window.AppConfig.siteUrl}/orders/?session_id=${sessionId}`
   const res = await fetch(url)
   if (!res.ok) throw new Error('Failed to fetch orders')
   const ordersData = await res.json()
@@ -108,13 +108,13 @@ async function fetchOrders(userId) {
 
 onMounted(async () => {
   loading.value = true
-  await checkAuth()
-  if (!isAuthenticated.value) {
+  const sessionId = localStorage.getItem('session_id')
+  if (!sessionId) {
     router.replace('/login')
     return
   }
   try {
-    orders.value = await fetchOrders(user.value.id)
+    orders.value = await fetchOrders(sessionId)
   } catch {
     orders.value = []
   } finally {

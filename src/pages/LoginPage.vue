@@ -7,13 +7,13 @@
           <form @submit.prevent="login">
             <div class="mb-3">
               <label class="form-label">Email или телефон</label>
-              <input v-model="form.login" type="text" class="form-control" required autofocus>
+              <input v-model="form.login" type="text" class="form-control form-control-lg" required autofocus>
             </div>
             <div class="mb-3">
               <label class="form-label">Пароль</label>
-              <input v-model="form.password" type="password" class="form-control" required>
+              <input v-model="form.password" type="password" class="form-control form-control-lg" required>
             </div>
-            <button class="btn btn-primary w-100" type="submit" :disabled="loading">Войти</button>
+            <button class="btn btn-primary btn-lg w-100" type="submit" :disabled="loading">Войти</button>
             <div v-if="alert.message" :class="['alert', alert.type, 'mt-3', 'text-center']">{{ alert.message }}</div>
           </form>
           <div class="text-center mt-3">
