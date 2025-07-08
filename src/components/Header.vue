@@ -113,6 +113,34 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         </a>
       </div>
+      <div class="card mobile-menu-card">
+        <h5 class="fs4">Информация</h5>
+        <a href="/docs/sposoby-oplaty" class="mobile-menu-btn">
+          <i class="bi bi-credit-card"></i>
+          <span>Способы оплаты</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a href="/docs/o-nas" class="mobile-menu-btn">
+          <i class="bi bi-info-circle"></i>
+          <span>О нас</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a href="/docs/politika-vozvrata-tovarov" class="mobile-menu-btn">
+          <i class="bi bi-arrow-counterclockwise"></i>
+          <span>Политика возврата товаров</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a href="/docs/pravila-vozvrata-denezhnyh-sredstv" class="mobile-menu-btn">
+          <i class="bi bi-cash-coin"></i>
+          <span>Правила возврата денежных средств</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a href="/docs/kontakty" class="mobile-menu-btn">
+          <i class="bi bi-telephone"></i>
+          <span>Контакты</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      </div>
     </div>
   </div>
 
