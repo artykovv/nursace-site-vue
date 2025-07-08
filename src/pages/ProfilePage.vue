@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5 profile-container">
+  <div class="container profile-container">
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6">
         <div class="profile-card p-4">
@@ -12,7 +12,7 @@
               <i class="bi bi-person-circle profile-avatar"></i>
             </div>
             <h4 class="mb-2 text-center">Здравствуйте, {{ user.name || user.email || 'Пользователь' }}!</h4>
-            <div class="mb-2 text-center"><b>Email:</b> {{ user.email || '—' }}</div>
+
             <div class="mt-4 d-flex flex-column gap-3 align-items-center">
               <router-link to="/profile/orders" class="btn btn-primary profile-btn w-100 d-flex flex-column align-items-center justify-content-center">
                 <i class="bi bi-bag-check" style="font-size: 2rem;"></i>

@@ -3,7 +3,7 @@
     <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
   </div>
   <div v-else>
-    <div class="container py-5">
+    <div class="container">
       <h2 class="mb-5">Корзина</h2>
       <div class="row">
         <div class="col-lg-8">

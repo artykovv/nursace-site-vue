@@ -7,7 +7,7 @@
       <h2 class="mt-3">Категории</h2>
       <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div v-for="item in categories" :key="item.category_id" class="col mt-3">
-          <router-link :to="{ path: '/category', query: { category: item.category_id } }" class="category-card">
+          <router-link :to="{ path: '/category', query: { category_id: item.category_id } }" class="category-card">
             <div class="category-card-inner">
               <div class="category-img mb-2">
                 <img v-if="item.image_url" :src="item.image_url" :alt="item.category_name" />
@@ -21,7 +21,7 @@
       <h2 class="mt-3">Бренды</h2>
       <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div v-for="item in brands" :key="item.manufacturer_id" class="col mt-3">
-          <router-link :to="{ path: '/category', query: { brand: item.manufacturer_id } }" class="category-card">
+          <router-link :to="{ path: '/category', query: { manufacturer_id: item.manufacturer_id } }" class="category-card">
             <div class="category-card-inner">
               <div class="category-img mb-2">
                 <i class="bi bi-award category-placeholder"></i>
@@ -34,7 +34,7 @@
       <h2 class="mt-3">Коллекции</h2>
       <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div v-for="item in collections" :key="item.collection_id" class="col mt-3">
-          <router-link :to="{ path: '/category', query: { collection: item.collection_id } }" class="category-card">
+          <router-link :to="{ path: '/category', query: { collection_id: item.collection_id } }" class="category-card">
             <div class="category-card-inner">
               <div class="category-img mb-2">
                 <i class="bi bi-collection category-placeholder"></i>
@@ -47,7 +47,7 @@
       <h2 class="mt-3">Сезоны</h2>
       <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div v-for="item in seasons" :key="item.season_id" class="col mt-3">
-          <router-link :to="{ path: '/category', query: { season: item.season_id } }" class="category-card">
+          <router-link :to="{ path: '/category', query: { season_id: item.season_id } }" class="category-card">
             <div class="category-card-inner">
               <div class="category-img mb-2">
                 <i class="bi bi-calendar2-week category-placeholder"></i>

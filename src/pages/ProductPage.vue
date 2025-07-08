@@ -73,7 +73,7 @@
           </div>
           <div class="mt-5">
             <div class="button_cart px-3 pb-3">
-              <button class="btn add-to-cart-btn" @click="addToCart(product.good_id)">
+              <button class="btn add-to-cart-btn w-100" @click="addToCart(product.good_id)">
                 <i class="bi bi-basket3"></i>
                 В корзину
               </button>

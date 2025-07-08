@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="margin-top: 120px;">
+  <div class="container">
     <h2 class="mb-4">Результаты поиска</h2>
     <div v-if="loading" class="text-center my-5">
       <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>

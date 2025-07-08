@@ -6,7 +6,7 @@
           <h2 class="mb-4 text-center">Вход</h2>
           <form @submit.prevent="login">
             <div class="mb-3">
-              <label class="form-label">Email или телефон</label>
+              <label class="form-label">Email</label>
               <input v-model="form.login" type="text" class="form-control form-control-lg" required autofocus>
             </div>
             <div class="mb-3">
@@ -17,7 +17,7 @@
             <div v-if="alert.message" :class="['alert', alert.type, 'mt-3', 'text-center']">{{ alert.message }}</div>
           </form>
           <div class="text-center mt-3">
-            <router-link to="/register">Нет аккаунта? Зарегистрироваться</router-link>
+            <router-link to="/register" class="link-primary fs-6">Нет аккаунта? <b>Создать</b></router-link>
           </div>
         </div>
       </div>

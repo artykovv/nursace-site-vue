@@ -32,8 +32,7 @@ const carouselData = ref([])
 onMounted(async () => {
   try {
     // Можно вынести URL в .env или props
-    const siteUrl = window.AppConfig?.siteUrl || 'https://api.style-shoes.shop'
-    const response = await fetch(`${siteUrl}/carousel/`)
+    const response = await fetch(`${window.AppConfig.siteUrl}/carousel/`)
     carouselData.value = await response.json()
   } catch (error) {
     console.error('Ошибка загрузки карусели:', error)

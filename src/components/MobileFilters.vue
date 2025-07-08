@@ -27,23 +27,41 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import FilterGroup from './FilterGroup.vue'
-const props = defineProps({ onUpdate: Function })
+const props = defineProps({
+  onUpdate: Function,
+  baseParams: { type: Object, default: () => ({}) }
+})
 const filters = ref({ colors: [], sexes: [], manufacturers: [], collections: [], sizes: [] })
 const selected = ref({ color_id: [], sex_id: [], manufacturer_id: [], collection_id: [], product_size: [] })
 
-async function loadFilters() {
+async function loadFilters(params = {}) {
   try {
-    const res = await fetch(`${window.AppConfig.siteUrl}/filters/`)
+    const url = new URL(`${window.AppConfig.siteUrl}/filters/`)
+    const allParams = { ...props.baseParams, ...params }
+    Object.entries(allParams).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => url.searchParams.append(key, v))
+      } else if (value !== undefined && value !== null && value !== '') {
+        url.searchParams.append(key, value)
+      }
+    })
+    const res = await fetch(url)
     const data = await res.json()
-    filters.value.colors = data.colors
-    filters.value.sexes = data.sexes
-    filters.value.manufacturers = data.manufacturers
-    filters.value.collections = data.collections
-    filters.value.sizes = data.sizes.map(s => ({ id: s.value, name: s.value }))
+    filters.value.colors = data.colors || []
+    filters.value.sexes = data.sexes || []
+    filters.value.manufacturers = data.manufacturers || []
+    filters.value.collections = data.collections || []
+    filters.value.sizes = (data.sizes || []).map(s => ({ id: s.value, name: s.value }))
   } catch (e) { console.error(e) }
 }
-onMounted(loadFilters)
-watch(selected, val => props.onUpdate({ ...val }), { deep: true })
+onMounted(() => loadFilters(selected.value))
+watch(selected, val => {
+  props.onUpdate({ ...val })
+  loadFilters(val)
+}, { deep: true })
+watch(() => props.baseParams, () => {
+  loadFilters(selected.value)
+}, { deep: true })
 </script>
 <style scoped>
 .modern-btn {

@@ -341,18 +341,17 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* background: #f8f8f8; */
   border-radius: 16px;
   font-size: 1.13rem;
   font-weight: 500;
   background-color: #fff;
   color: #40474f;
-  /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
   border: 1px solid #ececec;
   transition: background 0.18s, box-shadow 0.18s, color 0.18s;
   text-decoration: none;
   padding: 10px 14px 6px 14px;
-  min-width: 68px;
+  min-width: 100px;
+  width: 100px;
   min-height: 62px;
   margin: 0 2px;
 }
@@ -362,8 +361,13 @@ onMounted(async () => {
   color: #b89b7a;
 }
 .mobile-footer-btn .small {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   margin-top: 2px;
+  display: block;
+  width: 100%;
+  text-align: center;
+  min-height: 18px;
+  white-space: nowrap;
 }
 .mobile-footer-btn:hover, .mobile-footer-btn:active {
   background: #ece6df;

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h1 class="mt-5">{{ title }}</h1>
+        <h1>{{ title }}</h1>
 
         <div class="content mt-5">
             <div v-if="loading"><p>Пожалуйста, подождите...</p></div>

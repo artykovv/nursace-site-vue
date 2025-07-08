@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 id="title" class="mt-5">Служба поддержки</h1>
+    <h1 id="title">Служба поддержки</h1>
     <div class="content mt-5">
       <p id="content">Работаем ежедневно с 09:00 до 20:00.</p>
       <div class="card p-3">

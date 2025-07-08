@@ -6,12 +6,12 @@
     <div class="categorypage-root">
       <div class="categorypage-content">
         <aside class="categorypage-filters">
-          <CategoryFilters :onUpdate="updateFilters" />
+          <CategoryFilters :onUpdate="updateFilters" :baseParams="route.query" />
         </aside>
         <main class="categorypage-main">
           <div class="categorypage-controls">
             <PriceSort :sortBy="sortBy" @updateSort="updateSort" />
-            <MobileFilters :onUpdate="updateFilters" />
+            <MobileFilters :onUpdate="updateFilters" :baseParams="route.query" />
           </div>
           <div class="categorypage-products">
             <div v-for="product in products" :key="product.good_id" class="categorypage-product-item">
@@ -47,6 +47,7 @@ function debounce(fn, wait) {
   }
 }
 
+// Обновляет фильтры, включая custom_category_id, category_id, season_id и др.
 function updateFilters(newFilters) {
   filters.value = newFilters
 }
