@@ -1,3 +1,3 @@
 window.AppConfig = {
-    siteUrl: "https://api.style-shoes.shop"
+    siteUrl: import.meta.env.VITE_SITE_URL
 }; 
