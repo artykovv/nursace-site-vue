@@ -18,6 +18,12 @@
               <ProductCard :product="product" />
             </div>
           </div>
+          <div class="d-flex justify-content-center mt-4">
+            <button v-if="!allLoaded && !loading && products.length" class="btn btn-outline-primary" @click="loadMore" :disabled="loadingMore">
+              <span v-if="loadingMore" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Загрузить еще
+            </button>
+          </div>
         </main>
       </div>
     </div>
@@ -37,6 +43,10 @@ const filters = ref({})
 const sortBy = ref('desc')
 const route = useRoute()
 const loading = ref(true)
+const offset = ref(0)
+const limit = ref(20)
+const allLoaded = ref(false)
+const loadingMore = ref(false)
 
 // Debounce функция (можно заменить на lodash.debounce)
 function debounce(fn, wait) {
@@ -50,9 +60,13 @@ function debounce(fn, wait) {
 // Обновляет фильтры, включая custom_category_id, category_id, season_id и др.
 function updateFilters(newFilters) {
   filters.value = newFilters
+  offset.value = 0
+  allLoaded.value = false
 }
 function updateSort(newSort) {
   sortBy.value = newSort
+  offset.value = 0
+  allLoaded.value = false
 }
 function buildParams() {
   const params = new URLSearchParams()
@@ -73,22 +87,52 @@ function buildParams() {
     }
   }
   params.append('sort_by_price', sortBy.value)
+  params.append('offset', offset.value)
+  params.append('limit', limit.value)
   return params
 }
-async function fetchProducts() {
+async function fetchProducts(append = false) {
+  if (append) {
+    loadingMore.value = true
+  } else {
+    loading.value = true
+  }
   try {
     const params = buildParams()
     const url = `${window.AppConfig.siteUrl}/products/?${params.toString()}`
     const res = await fetch(url)
-    products.value = await res.json()
+    const newProducts = await res.json()
+    if (append) {
+      products.value.push(...newProducts)
+    } else {
+      products.value = newProducts
+    }
+    allLoaded.value = newProducts.length < limit.value
   } catch (error) {
-    products.value = []
+    if (!append) products.value = []
+    allLoaded.value = true
   } finally {
-    loading.value = false
+    if (append) {
+      loadingMore.value = false
+    } else {
+      loading.value = false
+    }
   }
 }
-const debouncedFetchProducts = debounce(fetchProducts, 400)
-watch([() => route.query, filters, sortBy], debouncedFetchProducts, { deep: true, immediate: true })
+function loadMore() {
+  offset.value += limit.value
+  fetchProducts(true)
+}
+const debouncedFetchProducts = debounce(() => {
+  offset.value = 0
+  allLoaded.value = false
+  fetchProducts(false)
+}, 400)
+watch([
+  () => route.query,
+  filters,
+  sortBy
+], debouncedFetchProducts, { deep: true, immediate: true })
 
 onMounted(() => { document.title = 'Каталог | Nursace' })
 </script>

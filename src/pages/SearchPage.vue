@@ -10,6 +10,12 @@
     <div v-else class="products_container">
       <ProductCard v-for="product in products" :key="product.good_id" :product="product" />
     </div>
+    <div class="d-flex justify-content-center mt-4">
+      <button v-if="!allLoaded && !loading && products.length" class="btn btn-outline-primary" @click="loadMore" :disabled="loadingMore">
+        <span v-if="loadingMore" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Загрузить еще
+      </button>
+    </div>
   </div>
 </template>
 
@@ -22,27 +28,54 @@ const route = useRoute()
 const products = ref([])
 const loading = ref(false)
 const searchQuery = ref('')
+const offset = ref(0)
+const limit = ref(20)
+const allLoaded = ref(false)
+const loadingMore = ref(false)
 
-async function fetchProducts() {
+async function fetchProducts(append = false) {
   const q = route.query.query || ''
   searchQuery.value = q
   if (!q) {
     products.value = []
+    allLoaded.value = true
     return
   }
-  loading.value = true
+  if (append) {
+    loadingMore.value = true
+  } else {
+    loading.value = true
+  }
   try {
-    const url = `${window.AppConfig.siteUrl}/products/?search=${encodeURIComponent(q)}`
+    const url = `${window.AppConfig.siteUrl}/products/?search=${encodeURIComponent(q)}&offset=${offset.value}&limit=${limit.value}`
     const res = await fetch(url)
-    products.value = await res.json()
+    const newProducts = await res.json()
+    if (append) {
+      products.value.push(...newProducts)
+    } else {
+      products.value = newProducts
+    }
+    allLoaded.value = newProducts.length < limit.value
   } catch (e) {
-    products.value = []
+    if (!append) products.value = []
+    allLoaded.value = true
   } finally {
-    loading.value = false
+    if (append) {
+      loadingMore.value = false
+    } else {
+      loading.value = false
+    }
   }
 }
-
-watch(() => route.query.query, fetchProducts, { immediate: true })
+function loadMore() {
+  offset.value += limit.value
+  fetchProducts(true)
+}
+watch(() => route.query.query, () => {
+  offset.value = 0
+  allLoaded.value = false
+  fetchProducts(false)
+}, { immediate: true })
 
 onMounted(() => { document.title = 'Поиск | Nursace' })
 </script>

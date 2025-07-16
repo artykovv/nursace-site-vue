@@ -20,6 +20,12 @@
             <ProductCard :product="product" />
           </div>
         </div>
+        <div class="d-flex justify-content-center mt-4">
+          <button v-if="!allLoaded && !loading && products.length" class="btn btn-outline-primary" @click="loadMore" :disabled="loadingMore">
+            <span v-if="loadingMore" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Загрузить еще
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -37,12 +43,20 @@ const filters = ref({})
 const sortBy = ref('desc')
 const route = useRoute()
 const loading = ref(true)
+const offset = ref(0)
+const limit = ref(20)
+const allLoaded = ref(false)
+const loadingMore = ref(false)
 
 function updateFilters(newFilters) {
   filters.value = newFilters
+  offset.value = 0
+  allLoaded.value = false
 }
 function updateSort(newSort) {
   sortBy.value = newSort
+  offset.value = 0
+  allLoaded.value = false
 }
 function buildParams() {
   const params = new URLSearchParams()
@@ -64,23 +78,52 @@ function buildParams() {
     }
   }
   params.append('sort_by_price', sortBy.value)
+  params.append('offset', offset.value)
+  params.append('limit', limit.value)
   return params
 }
-async function fetchProducts() {
-  loading.value = true
+async function fetchProducts(append = false) {
+  if (append) {
+    loadingMore.value = true
+  } else {
+    loading.value = true
+  }
   try {
     const params = buildParams()
     const url = `${window.AppConfig.siteUrl}/products/?${params.toString()}`
     const res = await fetch(url)
-    products.value = await res.json()
+    const newProducts = await res.json()
+    if (append) {
+      products.value.push(...newProducts)
+    } else {
+      products.value = newProducts
+    }
+    allLoaded.value = newProducts.length < limit.value
   } catch (error) {
-    console.error('Error fetching products:', error)
-    products.value = []
+    if (!append) products.value = []
+    allLoaded.value = true
   } finally {
-    loading.value = false
+    if (append) {
+      loadingMore.value = false
+    } else {
+      loading.value = false
+    }
   }
 }
-watch([() => route.params.id, () => route.query, filters, sortBy], fetchProducts, { deep: true, immediate: true })
+function loadMore() {
+  offset.value += limit.value
+  fetchProducts(true)
+}
+watch([
+  () => route.params.id,
+  () => route.query,
+  filters,
+  sortBy
+], () => {
+  offset.value = 0
+  allLoaded.value = false
+  fetchProducts(false)
+}, { deep: true, immediate: true })
 </script>
 <style scoped>
 .products_container {
