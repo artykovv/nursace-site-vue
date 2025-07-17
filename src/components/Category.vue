@@ -13,7 +13,7 @@
     </div>
     <div v-else class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
       <div v-for="item in categories" :key="item.category_id" class="col mt-3">
-        <router-link :to="{ path: '/category', query: { category: item.category_id } }" class="category-card">
+        <router-link :to="{ path: '/category', query: { category_id: item.category_id } }" class="category-card">
           <div class="category-card-inner">
             <div class="category-img mb-2">
               <img v-if="item.image_url" :src="item.image_url" :alt="item.category_name" />

@@ -50,8 +50,8 @@
                 v-for="color in colorOptions"
                 :key="color.color_id"
                 class="color-option"
-                :class="{active: color.good_id === product.good_id}"
-                @click="color.good_id !== product.good_id && switchProduct(color.good_id)"
+                :class="{active: color.color_id === selectedColorId}"
+                @click="selectedColorId = color.color_id"
                 style="cursor:pointer"
               >
                 {{ color.color_name }}
@@ -63,7 +63,7 @@
             <div class="d-flex flex-wrap gap-2">
               <span
                 v-for="size in sizeOptions"
-                :key="size.size"
+                :key="size.good_id"
                 class="size-option"
                 :class="{active: size.good_id === product.good_id}"
                 @click="size.good_id !== product.good_id && switchProduct(size.good_id)"
@@ -88,7 +88,7 @@
           <tr><th>Коллекция</th><td>{{ collection?.collection_name || '—' }}</td></tr>
           <tr><th>Сезон</th><td>{{ season?.season_name || '—' }}</td></tr>
           <tr><th>Пол</th><td>{{ sex?.sex_name || '—' }}</td></tr>
-          <tr><th>Цвет</th><td>{{ product.color?.color_name || colorName?.color_name || '—' }}</td></tr>
+          <tr><th>Цвет</th><td>{{ colorName?.color_name || '—' }}</td></tr>
           <tr><th>Материал</th><td>{{ material?.material_name || '—' }}</td></tr>
           <tr><th>Размер</th><td>{{ product.product_size || '—' }}</td></tr>
           <tr><th>Описание</th><td>{{ product.description || '—' }}</td></tr>
@@ -111,6 +111,8 @@ const route = useRoute()
 const router = useRouter()
 const PLACEHOLDER_IMAGE = 'https://placehold.co/500x500'
 const loading = ref(true)
+const detailsLoading = ref(true)
+const similarLoading = ref(true)
 
 const category = ref(null)
 const brand = ref(null)
@@ -123,6 +125,15 @@ const material = ref(null)
 const hasDiscount = computed(() => product.value && product.value.retail_price !== product.value.retail_price_with_discount)
 const discountPercent = computed(() => hasDiscount.value ? Math.round(((product.value.retail_price - product.value.retail_price_with_discount) / product.value.retail_price) * 100) : 0)
 
+// Выбранный цвет
+const selectedColorId = ref(null)
+watch(product, (val) => {
+  if (val && val.color && val.color.color_id) {
+    selectedColorId.value = val.color.color_id
+  }
+})
+
+// Только уникальные цвета
 const colorOptions = computed(() => {
   if (!product.value) return []
   const all = [product.value, ...(similarProducts.value || [])]
@@ -132,27 +143,24 @@ const colorOptions = computed(() => {
       map.set(p.color.color_id, {
         color_id: p.color.color_id,
         color_name: p.color.color_name,
-        hex: p.color.hex_code,
-        good_id: p.good_id
+        hex: p.color.hex_code
       })
     }
   })
   return Array.from(map.values())
 })
 
+// Только размеры для выбранного цвета
 const sizeOptions = computed(() => {
   if (!product.value) return []
   const all = [product.value, ...(similarProducts.value || [])]
-  const map = new Map()
-  all.forEach(p => {
-    if (p.product_size) {
-      map.set(p.product_size, {
-        size: p.product_size,
-        good_id: p.good_id
-      })
-    }
-  })
-  return Array.from(map.values()).sort((a, b) => Number(a.size) - Number(b.size))
+  return all
+    .filter(p => p.color && p.color.color_id === selectedColorId.value)
+    .map(p => ({
+      size: p.product_size,
+      good_id: p.good_id
+    }))
+    .sort((a, b) => Number(a.size) - Number(b.size))
 })
 
 function switchProduct(good_id) {
@@ -177,7 +185,46 @@ watch(product, (val) => {
     desc.setAttribute('content', `Купить ${val.good_name} в Бишкеке. Оригинальная обувь, доставка по Кыргызстану. Магазин Nursace.`);
   }
 }, { immediate: true });
+
+async function fetchDetails() {
+  detailsLoading.value = true
+  try {
+    const promises = []
+    if (product.value.category_id) promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/categories/${product.value.category_id}`); category.value = await r.json() })())
+    if (product.value.manufacturer_id) promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/manufacturers/${product.value.manufacturer_id}`); brand.value = await r.json() })())
+    if (product.value.collection_id) promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/collections/${product.value.collection_id}`); collection.value = await r.json() })())
+    if (product.value.season_id) promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/seasons/${product.value.season_id}`); season.value = await r.json() })())
+    if (product.value.sex_id) promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/sexes/${product.value.sex_id}`); sex.value = await r.json() })())
+    if (product.value.color && product.value.color.color_id) {
+      promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/colors/${product.value.color.color_id}`); colorName.value = await r.json() })())
+    } else if (product.value.color_id) {
+      promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/colors/${product.value.color_id}`); colorName.value = await r.json() })())
+    } else {
+      colorName.value = null
+    }
+    if (product.value.material_id) promises.push((async () => { const r = await fetch(`${window.AppConfig.siteUrl}/materials/${product.value.material_id}`); material.value = await r.json() })())
+    await Promise.all(promises)
+  } finally {
+    detailsLoading.value = false
+  }
+}
+
+async function fetchSimilar() {
+  similarLoading.value = true
+  try {
+    const simRes = await fetch(`${window.AppConfig.siteUrl}/products/${product.value.good_id}/similar`)
+    similarProducts.value = await simRes.json()
+  } catch (e) {
+    similarProducts.value = []
+  } finally {
+    similarLoading.value = false
+  }
+}
+
 async function fetchProduct() {
+  loading.value = true
+  detailsLoading.value = true
+  similarLoading.value = true
   try {
     const good_id = route.query.good_id
     if (!good_id) return
@@ -190,46 +237,9 @@ async function fetchProduct() {
     if (!product.value.images || !product.value.images.length) {
       product.value.images = [{ image_url: PLACEHOLDER_IMAGE }]
     }
-    // Загружаем похожие товары
-    const simRes = await fetch(`${window.AppConfig.siteUrl}/products/${good_id}/similar`)
-    similarProducts.value = await simRes.json()
-
-    // Дополнительные запросы на характеристики
-    category.value = null
-    brand.value = null
-    collection.value = null
-    season.value = null
-    sex.value = null
-    colorName.value = null
-    material.value = null
-    if (product.value.category_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/categories/${product.value.category_id}`)
-      category.value = await r.json()
-    }
-    if (product.value.manufacturer_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/manufacturers/${product.value.manufacturer_id}`)
-      brand.value = await r.json()
-    }
-    if (product.value.collection_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/collections/${product.value.collection_id}`)
-      collection.value = await r.json()
-    }
-    if (product.value.season_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/seasons/${product.value.season_id}`)
-      season.value = await r.json()
-    }
-    if (product.value.sex_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/sexes/${product.value.sex_id}`)
-      sex.value = await r.json()
-    }
-    if (product.value.color && product.value.color.color_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/colors/${product.value.color.color_id}`)
-      colorName.value = await r.json()
-    }
-    if (product.value.material_id) {
-      const r = await fetch(`${window.AppConfig.siteUrl}/materials/${product.value.material_id}`)
-      material.value = await r.json()
-    }
+    // Параллельно подгружаем детали и похожие товары
+    fetchDetails()
+    fetchSimilar()
   } catch (e) {
     product.value = null
     similarProducts.value = []

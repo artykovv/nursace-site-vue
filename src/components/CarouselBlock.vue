@@ -1,59 +1,67 @@
 <template>
-  <div class="container">
-    <div class="mt-5">
-      <div class="d-flex justify-content-between mb-2">
-        <div>
-          <a href="/category?category=15" class="products-all-btn">
-            <i class="bi bi-bag"></i>
-            <span>Обувь</span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-          </a>
+  <div class="carousel_container position-relative p-3 mt-5">
+    <div ref="productsContainer" class="products_container d-flex flex-row flex-nowrap gap-3">
+      <div v-for="product in products" :key="product.good_id" class="product_card">
+        <a :href="`/product?good_id=${product.good_id}`">
+          <div class="product_image position-relative">
+            <img :src="mainImage(product)" :alt="product.good_name">
+            <div v-if="hasDiscount(product)" class="discount_badge">-{{ discountPercentage(product) }}% </div>
+          </div>
+          <div class="product_price d-flex flex-column px-3 py-2">
+            <span class="old_price" :style="hasDiscount(product) ? '' : 'visibility: hidden;'">{{ product.retail_price }}</span>
+            <span class="new_price ms-1">{{ product.retail_price_with_discount }} сом</span>
+          </div>
+          <div class="product_name p-3">
+            <div>
+              <span>{{ product.good_name }}</span>
+            </div>
+          </div>
+        </a>
+        <div class="button_cart px-3 pb-3">
+          <button class="btn carousel-add-to-cart-btn d-flex align-items-center justify-content-center" @click="addToCart(product.good_id)">
+            <i class="bi bi-basket3"></i>
+            <span>В корзину</span>
+          </button>
         </div>
       </div>
-      <CarouselBlock :products="products1" />
-      <div class="d-flex justify-content-between mb-2 mt-4">
-        <div>
-          <a href="/category?category=10" class="products-all-btn">
-            <i class="bi bi-gem"></i>
-            <span>Аксессуары</span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-          </a>
-        </div>
-      </div>
-      <CarouselBlock :products="products2" />
-      <div class="d-flex justify-content-between mb-2 mt-4">
-        <div>
-          <a href="/category?category=16" class="products-all-btn">
-            <i class="bi bi-person-bounding-box"></i>
-            <span>Одежда</span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-          </a>
-        </div>
-      </div>
-      <CarouselBlock :products="products3" />
     </div>
+    <button class="carousel_btn carousel_btn_prev position-absolute" @click="moveCarousel(-1)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <button class="carousel_btn carousel_btn_next position-absolute" @click="moveCarousel(1)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import CarouselBlock from './CarouselBlock.vue'
-
-const products1 = ref([])
-const products2 = ref([])
-const products3 = ref([])
-
-onMounted(async () => {
-  const url = window.AppConfig?.siteUrl || 'https://api.style-shoes.shop'
-  const [res1, res2, res3] = await Promise.all([
-    fetch(`${url}/products/?category_id=15&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=15&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=15&offset=0&limit=10`)
-  ])
-  products1.value = await res1.json()
-  products2.value = await res2.json()
-  products3.value = await res3.json()
-})
+import { ref } from 'vue'
+import { addToCart } from '@/utils'
+const props = defineProps({ products: Array })
+const productsContainer = ref(null)
+function mainImage(product) {
+  const img = product.images?.find(img => img.is_main)
+  return img ? img.image_url : 'https://placehold.co/500x500'
+}
+function hasDiscount(product) {
+  return product.retail_price !== product.retail_price_with_discount
+}
+function discountPercentage(product) {
+  if (!hasDiscount(product)) return 0
+  return Math.round(((product.retail_price - product.retail_price_with_discount) / product.retail_price) * 100)
+}
+function moveCarousel(direction) {
+  const container = productsContainer.value
+  if (!container) return
+  const card = container.querySelector('.product_card')
+  if (!card) return
+  const scrollAmount = card.offsetWidth + 16
+  container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' })
+}
 </script>
 
 <style scoped>
@@ -210,36 +218,6 @@ onMounted(async () => {
 .carousel_btn:hover {
     background: rgba(202, 202, 202, 0.7);
 }
-.products-all-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-radius: 16px;
-  font-size: 1.13rem;
-  font-weight: 500;
-  color: #40474f;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  border: 1px solid #ececec;
-  transition: background 0.18s, box-shadow 0.18s, color 0.18s;
-  text-decoration: none;
-  padding: 10px 18px;
-  margin-left: 0;
-  justify-content: flex-start;
-}
-.products-all-btn i {
-  font-size: 1.35rem;
-  color: #b89b7a;
-}
-.products-all-btn svg {
-  margin-left: 4px;
-  color: #b89b7a;
-}
-.products-all-btn:hover, .products-all-btn:active {
-  background: #ece6df;
-  color: #b89b7a;
-  box-shadow: 0 4px 16px rgba(200,180,140,0.08);
-}
 @media (max-width: 576px) {
     .product_card {
         width: 155px;
@@ -261,17 +239,6 @@ onMounted(async () => {
     #search-input {
         background-color: rgb(230, 231, 234);
         border-radius: 16px;
-    }
-    .products-all-btn {
-      width: 100%;
-      display: flex;
-    }
-    .products-all-btn i {
-      font-size: 1.1rem;
-    }
-    .products-all-btn svg {
-      width: 20px;
-      height: 20px;
     }
 }
 </style> 

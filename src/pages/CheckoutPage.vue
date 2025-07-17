@@ -1,7 +1,7 @@
 <template>
   <div class="container py-5">
     <h2 class="mb-5">Оформление заказа</h2>
-    <div class="row g-5">
+    <div class="row g-5 mt-3">
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Ваша корзина</span>
@@ -24,7 +24,7 @@
       </div>
       <div class="col-md-7 col-lg-8">
         <form @submit.prevent="submitOrder" class="needs-validation card p-4" novalidate>
-          <div class="row g-3">
+          <div class="row g-3 mt-3">
             <div class="col-sm-6">
               <label class="form-label">Имя</label>
               <input v-model="form.first_name" type="text" class="form-control" required>
@@ -62,11 +62,11 @@
               <input v-model="form.postal_code" type="text" class="form-control" required>
             </div>
           </div>
-          <hr class="my-4">
+          <!-- <hr class="my-4">
           <div class="form-check">
             <input v-model="form.is_save" type="checkbox" class="form-check-input" id="is_save">
             <label class="form-check-label" for="is_save">Сохранить эту информацию для следующего раза</label>
-          </div>
+          </div> -->
           <hr class="my-4">
           <h4 class="mb-3">Оплата</h4>
           <div class="my-3">
