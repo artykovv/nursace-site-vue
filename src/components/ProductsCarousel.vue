@@ -44,11 +44,11 @@ const products2 = ref([])
 const products3 = ref([])
 
 onMounted(async () => {
-  const url = window.AppConfig?.siteUrl || 'https://api.style-shoes.shop'
+  const url = window.AppConfig?.siteUrl 
   const [res1, res2, res3] = await Promise.all([
-    fetch(`${url}/products/?category_id=19&offset=0&limit=10`),
     fetch(`${url}/products/?category_id=18&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=17&offset=0&limit=10`)
+    fetch(`${url}/products/?category_id=17&offset=0&limit=10`),
+    fetch(`${url}/products/?category_id=10&offset=0&limit=10`)
   ])
   products1.value = await res1.json()
   products2.value = await res2.json()
