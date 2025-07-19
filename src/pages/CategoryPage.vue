@@ -409,7 +409,7 @@ export default {
     margin-right: 10px;
   }
   .sort-section span{
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 </style>

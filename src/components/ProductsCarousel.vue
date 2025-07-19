@@ -3,7 +3,7 @@
     <div class="mt-5">
       <div class="d-flex justify-content-between mb-2">
         <div>
-          <a href="/category?category=15" class="products-all-btn">
+          <a href="/category?category=18" class="products-all-btn">
             <i class="bi bi-bag"></i>
             <span>Обувь</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
@@ -13,7 +13,7 @@
       <CarouselBlock :products="products1" />
       <div class="d-flex justify-content-between mb-2 mt-4">
         <div>
-          <a href="/category?category=10" class="products-all-btn">
+          <a href="/category?category=19" class="products-all-btn">
             <i class="bi bi-gem"></i>
             <span>Аксессуары</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
@@ -23,7 +23,7 @@
       <CarouselBlock :products="products2" />
       <div class="d-flex justify-content-between mb-2 mt-4">
         <div>
-          <a href="/category?category=16" class="products-all-btn">
+          <a href="/category?category=17" class="products-all-btn">
             <i class="bi bi-person-bounding-box"></i>
             <span>Одежда</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
@@ -46,9 +46,9 @@ const products3 = ref([])
 onMounted(async () => {
   const url = window.AppConfig?.siteUrl || 'https://api.style-shoes.shop'
   const [res1, res2, res3] = await Promise.all([
-    fetch(`${url}/products/?category_id=15&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=15&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=15&offset=0&limit=10`)
+    fetch(`${url}/products/?category_id=19&offset=0&limit=10`),
+    fetch(`${url}/products/?category_id=18&offset=0&limit=10`),
+    fetch(`${url}/products/?category_id=17&offset=0&limit=10`)
   ])
   products1.value = await res1.json()
   products2.value = await res2.json()

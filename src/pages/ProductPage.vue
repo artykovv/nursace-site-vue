@@ -35,12 +35,13 @@
             <span class="fs-4">Артикул: <span class="fw-bold">{{ product.articul }}</span></span>
           </div>
           <div class="mt-5">
-            <div class="product_price fs-2">
-              <div v-if="hasDiscount" class="product_discount_badge visible">-{{ discountPercent }}%</div>
-              <div class="d-flex">
-                <span class="old_price" :class="{visible: hasDiscount}">{{ product.retail_price }}</span>
-                <span class="new_price ms-1">{{ product.retail_price_with_discount }} сом</span>
-              </div>
+            <div class="product_price-block d-flex align-items-center gap-3 mt-2 mb-3">
+              <span v-if="hasDiscount" class="discount-badge">
+                <i class="bi bi-percent"></i>
+                -{{ discountPercent }}%
+              </span>
+              <span class="new-price">{{ product.retail_price_with_discount }} <span class="currency">сом</span></span>
+              <span v-if="hasDiscount" class="old-price">{{ product.retail_price }}</span>
             </div>
           </div>
           <div class="color-selector mt-5" v-if="colorOptions.length > 0">
@@ -339,5 +340,42 @@ async function fetchProduct() {
   vertical-align: middle;
   display: flex;
   align-items: center;
+}
+.product_price-block {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.discount-badge {
+  background: linear-gradient(90deg,#cdb5a7 0,#b89b7a 100%);
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 6px 14px 6px 10px;
+  box-shadow: 0 2px 8px rgba(200,180,140,0.08);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.new-price {
+  color: #40474f;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.old-price {
+  color: #b89b7a;
+  font-size: 1.15rem;
+  text-decoration: line-through;
+  opacity: 0.7;
+  margin-left: 6px;
+  align-self: flex-end;
+}
+.currency {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-left: 2px;
 }
 </style> 
