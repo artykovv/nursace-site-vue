@@ -27,23 +27,23 @@
           <div class="row g-3 mt-3">
             <div class="col-sm-6">
               <label class="form-label">Имя</label>
-              <input v-model="form.first_name" type="text" class="form-control" required>
+              <input v-model="form.first_name" type="text" class="form-control" :class="{'is-invalid': fieldErrors.first_name}" required>
             </div>
             <div class="col-sm-6">
               <label class="form-label">Фамилия</label>
-              <input v-model="form.last_name" type="text" class="form-control" required>
+              <input v-model="form.last_name" type="text" class="form-control" :class="{'is-invalid': fieldErrors.last_name}" required>
             </div>
             <div class="col-12">
               <label class="form-label">Телефон</label>
-              <input v-model="form.phone" type="tel" class="form-control" required placeholder="+996...">
+              <input v-model="form.phone" type="tel" class="form-control" :class="{'is-invalid': fieldErrors.phone}" required placeholder="+996...">
             </div>
             <div class="col-12">
-              <label class="form-label">Email <span class="text-body-secondary">(Необязательно)</span></label>
-              <input v-model="form.email" type="email" class="form-control">
+              <label class="form-label">Email <span class="text-body-secondary"></span></label>
+              <input v-model="form.email" type="email" class="form-control" :class="{'is-invalid': fieldErrors.email}" >
             </div>
             <div class="col-12">
               <label class="form-label">Адрес</label>
-              <input v-model="form.address_line1" type="text" class="form-control" required>
+              <input v-model="form.address_line1" type="text" class="form-control" :class="{'is-invalid': fieldErrors.address_line1}" required>
             </div>
             <div class="col-12">
               <label class="form-label">Примечания к заказу <span class="text-body-secondary">(Необязательно)</span></label>
@@ -51,15 +51,15 @@
             </div>
             <div class="col-md-5">
               <label class="form-label">Город</label>
-              <input v-model="form.city" type="text" class="form-control" required>
+              <input v-model="form.city" type="text" class="form-control" :class="{'is-invalid': fieldErrors.city}" required>
             </div>
             <div class="col-md-4">
               <label class="form-label">Регион</label>
-              <input v-model="form.region" type="text" class="form-control" required>
+              <input v-model="form.region" type="text" class="form-control" :class="{'is-invalid': fieldErrors.region}" required>
             </div>
             <div class="col-md-3">
               <label class="form-label">Почтовый индекс</label>
-              <input v-model="form.postal_code" type="text" class="form-control" required>
+              <input v-model="form.postal_code" type="text" class="form-control" :class="{'is-invalid': fieldErrors.postal_code}" required>
             </div>
           </div>
           <!-- <hr class="my-4">
@@ -85,6 +85,7 @@
           </div>
           <div v-if="status === 'success'" class="alert alert-success text-center mt-4">Заказ успешно оформлен!</div>
           <div v-if="status === 'fail'" class="alert alert-danger text-center mt-4">Ошибка оформления заказа. Попробуйте ещё раз.</div>
+          <div v-if="formError" class="alert alert-danger text-center mt-4">{{ formError }}</div>
         </form>
       </div>
     </div>
@@ -97,9 +98,11 @@ const cart = ref([])
 const total = ref(0)
 const loading = ref(false)
 const status = ref('')
+const formError = ref('')
 const form = ref({
   first_name: '', last_name: '', phone: '', email: '', address_line1: '', city: '', region: '', postal_code: '', order_note: '', is_save: false
 })
+const fieldErrors = ref({})
 
 async function fetchCart() {
   try {
@@ -123,8 +126,23 @@ async function fetchCart() {
 }
 
 async function submitOrder() {
+  formError.value = ''
   loading.value = true
   status.value = ''
+  fieldErrors.value = {}
+  // Валидация обязательных полей
+  const requiredFields = ['first_name', 'last_name', 'phone', 'email', 'address_line1', 'city', 'region', 'postal_code']
+  let hasError = false
+  for (const field of requiredFields) {
+    if (!form.value[field] || String(form.value[field]).trim() === '') {
+      fieldErrors.value[field] = true
+      hasError = true
+    }
+  }
+  if (hasError) {
+    loading.value = false
+    return
+  }
   try {
     let session_id = ''
     if (window.getAuthParam) {
@@ -181,6 +199,10 @@ onUnmounted(() => {
   background: linear-gradient(90deg,#ffd6d6 0,#ffbaba 100%);
   color: #b71c1c;
   font-weight: bold;
+}
+.is-invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
 }
 @media (max-width: 991px) {
   .card { margin-bottom: 24px; }

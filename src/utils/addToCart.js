@@ -112,7 +112,7 @@ export const addToCart = debounce(async function(goodId, quantity = 1) {
     payload.session_id = param.split('=')[1]
   }
   try {
-    const response = await fetch(`${SITE_URL}/cart/`, {
+    const response = await fetch(`${SITE_URL}/cart/v2`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

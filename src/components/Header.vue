@@ -244,9 +244,19 @@ onMounted(async () => {
 .search .form-control {
   border-radius: 0.25rem 0 0 0.25rem;
   height: 45px;
+  border: 1.5px solid #cdb5a7;
+  box-shadow: none;
+}
+.search .form-control:focus {
+  border-color: #b89b7a;
+  box-shadow: 0 0 0 2px #e7d8c7;
+  outline: none;
 }
 .search .btn {
   border-radius: 0 0.25rem 0.25rem 0;
+  border: 1.5px solid #cdb5a7;
+  border-left: none;
+  box-shadow: none;
 }
 .actions a {
   width: 70px;
@@ -302,6 +312,17 @@ onMounted(async () => {
   }
   .mobile-header .mobile-search .input-group {
     height: 45px;
+  }
+  .mobile-header .mobile-search .form-control {
+    border-radius: 0.25rem 0 0 0.25rem;
+    height: 45px;
+    border: 1.5px solid #cdb5a7;
+    box-shadow: none;
+  }
+  .mobile-header .mobile-search .form-control:focus {
+    border-color: #b89b7a;
+    box-shadow: 0 0 0 2px #e7d8c7;
+    outline: none;
   }
   :global(body) {
     padding-bottom: 70px;
