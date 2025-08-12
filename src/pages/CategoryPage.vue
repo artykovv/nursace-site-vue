@@ -151,6 +151,8 @@ export default {
       color_id: [],
       sex_id: [],
       product_size: [],
+      discounts: route.query.discounts === 'true' ? true : undefined,
+      discount_id: route.query.discount_id ? Number(route.query.discount_id) : undefined,
       // ... другие фильтры
     })
 
@@ -162,6 +164,8 @@ export default {
       if (selectedFilters.value.collection_id.length) params.append('collection_id', selectedFilters.value.collection_id[0])
       if (selectedFilters.value.season_id.length) params.append('season_id', selectedFilters.value.season_id[0])
       if (selectedFilters.value.custom_category_id.length) params.append('custom_category_id', selectedFilters.value.custom_category_id[0])
+      if (selectedFilters.value.discount_id) params.append('discount_id', selectedFilters.value.discount_id)
+      if (selectedFilters.value.discounts === true) params.append('discounts', 'true')
       const res = await fetch(`${window.AppConfig.siteUrl}/filters/?${params}`)
       filters.value = await res.json()
     }
@@ -177,6 +181,10 @@ export default {
       }
       const params = new URLSearchParams()
       Object.entries(selectedFilters.value).forEach(([key, val]) => {
+        if (key === 'discounts') {
+          if (val === true) params.append('discounts', 'true')
+          return
+        }
         if (Array.isArray(val) && val.length) {
           val.forEach(v => {
             if (v !== null && v !== undefined && v !== '') params.append(key, v)
@@ -389,8 +397,8 @@ export default {
     animation: slideInLeft 0.2s;
   }
   @keyframes slideInLeft {
-    from { transform: translateX(-100%);}
-    to { transform: translateX(0);}
+    from { transform: translateX(-100%);} 
+    to { transform: translateX(0);} 
   }
   .btn-close {
     position: absolute;

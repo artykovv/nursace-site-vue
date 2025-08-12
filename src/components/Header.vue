@@ -72,6 +72,11 @@
           <span>Каталог</span>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         </a>
+        <a href="/category?discounts=true" class="mobile-menu-btn discount-highlight">
+          <i class="bi bi-fire"></i>
+          <span>Скидки</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
         <a href="/cart/" class="mobile-menu-btn">
           <i class="bi bi-basket3"></i>
           <span>Корзина</span>
@@ -422,5 +427,11 @@ onMounted(async () => {
   background: #ece6df;
   color: #b89b7a;
   box-shadow: 0 4px 16px rgba(200,180,140,0.08);
+}
+
+/* highlight discounts menu icons */
+.mobile-menu-btn.discount-highlight i,
+.mobile-menu-btn.discount-highlight svg {
+  color: #ff3d00;
 }
 </style> 

@@ -31,11 +31,22 @@ const carouselData = ref([])
 
 onMounted(async () => {
   try {
-    // Можно вынести URL в .env или props
     const response = await fetch(`${window.AppConfig.siteUrl}/carousel/`)
-    carouselData.value = await response.json()
+    const data = await response.json()
+    if (Array.isArray(data) && data.length > 0) {
+      carouselData.value = data
+    } else {
+      carouselData.value = [
+        { href: '/', src: 'https://placehold.co/3000x1500' },
+        { href: '/', src: 'https://placehold.co/3000x1500' }
+      ]
+    }
   } catch (error) {
     console.error('Ошибка загрузки карусели:', error)
+    carouselData.value = [
+      { href: '/', src: 'https://placehold.co/3000x1500' },
+      { href: '/', src: 'https://placehold.co/3000x1500' }
+    ]
   }
 })
 </script>

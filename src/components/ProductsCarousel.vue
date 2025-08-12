@@ -3,8 +3,19 @@
     <div class="mt-5">
       <div class="d-flex justify-content-between mb-2">
         <div>
-          <a href="/category?category=18" class="products-all-btn">
-            <i class="bi bi-bag"></i>
+          <a href="/category?discounts=true" class="products-all-btn">
+            <i class="bi bi-fire" style="color:#ff5722;"></i>
+            <span>Скидки</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+      <CarouselBlock :products="discounts" />
+      
+      <div class="d-flex justify-content-between mb-2 mt-4">
+        <div>
+          <a :href="categoryLink(shoesCategoryId)" class="products-all-btn">
+            <!-- <i class="bi bi-bag"></i> -->
             <span>Обувь</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
           </a>
@@ -13,8 +24,8 @@
       <CarouselBlock :products="products1" />
       <div class="d-flex justify-content-between mb-2 mt-4">
         <div>
-          <a href="/category?category=19" class="products-all-btn">
-            <i class="bi bi-gem"></i>
+          <a :href="categoryLink(accessoriesCategoryId)" class="products-all-btn">
+            <!-- <i class="bi bi-gem"></i> -->
             <span>Аксессуары</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
           </a>
@@ -23,8 +34,8 @@
       <CarouselBlock :products="products2" />
       <div class="d-flex justify-content-between mb-2 mt-4">
         <div>
-          <a href="/category?category=17" class="products-all-btn">
-            <i class="bi bi-person-bounding-box"></i>
+          <a :href="categoryLink(clothesCategoryId)" class="products-all-btn">
+            <!-- <i class="bi bi-person-bounding-box"></i> -->
             <span>Одежда</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
           </a>
@@ -39,20 +50,49 @@
 import { ref, onMounted } from 'vue'
 import CarouselBlock from './CarouselBlock.vue'
 
+const discounts = ref([])
 const products1 = ref([])
 const products2 = ref([])
 const products3 = ref([])
 
+const shoesCategoryId = ref(null)
+const accessoriesCategoryId = ref(null)
+const clothesCategoryId = ref(null)
+
+function categoryLink(id) {
+  return id ? `/category?category_id=${id}` : '/category'
+}
+
 onMounted(async () => {
   const url = window.AppConfig?.siteUrl 
-  const [res1, res2, res3] = await Promise.all([
-    fetch(`${url}/products/?category_id=18&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=17&offset=0&limit=10`),
-    fetch(`${url}/products/?category_id=19&offset=0&limit=10`)
-  ])
-  products1.value = await res1.json()
-  products2.value = await res2.json()
-  products3.value = await res3.json()
+  try {
+    const [catsRes, discountsRes] = await Promise.all([
+      fetch(`${url}/categories/`),
+      fetch(`${url}/products/?discounts=true&offset=0&limit=10`)
+    ])
+    const categories = await catsRes.json()
+    discounts.value = await discountsRes.json()
+
+    const findId = (name) => categories.find(c => c.category_name === name)?.category_id || null
+    shoesCategoryId.value = findId('Обувь')
+    accessoriesCategoryId.value = findId('Аксессуары')
+    clothesCategoryId.value = findId('Одежда')
+
+    const [res1, res2, res3] = await Promise.all([
+      shoesCategoryId.value ? fetch(`${url}/products/?category_id=${shoesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null),
+      accessoriesCategoryId.value ? fetch(`${url}/products/?category_id=${accessoriesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null),
+      clothesCategoryId.value ? fetch(`${url}/products/?category_id=${clothesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null)
+    ])
+
+    products1.value = res1 ? await res1.json() : []
+    products2.value = res2 ? await res2.json() : []
+    products3.value = res3 ? await res3.json() : []
+  } catch (e) {
+    discounts.value = []
+    products1.value = []
+    products2.value = []
+    products3.value = []
+  }
 })
 </script>
 
