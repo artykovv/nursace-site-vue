@@ -134,10 +134,10 @@ function isUrgent(end) {
 onMounted(async () => {
   document.title = 'Категории | Nursace'
   try {
-    categories.value = await (await fetch(`${window.AppConfig.siteUrl}/categories/`)).json()
-    brands.value = await (await fetch(`${window.AppConfig.siteUrl}/manufacturers/`)).json()
-    collections.value = await (await fetch(`${window.AppConfig.siteUrl}/collections/`)).json()
-    seasons.value = await (await fetch(`${window.AppConfig.siteUrl}/seasons/`)).json()
+    categories.value = await (await fetch(`${window.AppConfig.siteUrl}/categories/v3/`)).json()
+    brands.value = await (await fetch(`${window.AppConfig.siteUrl}/manufacturers/v3/`)).json()
+    collections.value = await (await fetch(`${window.AppConfig.siteUrl}/collections/v3/`)).json()
+    seasons.value = await (await fetch(`${window.AppConfig.siteUrl}/seasons/v3/`)).json()
   } catch (e) {}
   loading.value = false
 

@@ -166,7 +166,7 @@ export default {
       if (selectedFilters.value.custom_category_id.length) params.append('custom_category_id', selectedFilters.value.custom_category_id[0])
       if (selectedFilters.value.discount_id) params.append('discount_id', selectedFilters.value.discount_id)
       if (selectedFilters.value.discounts === true) params.append('discounts', 'true')
-      const res = await fetch(`${window.AppConfig.siteUrl}/filters/?${params}`)
+      const res = await fetch(`${window.AppConfig.siteUrl}/filters/v3/?${params}`)
       filters.value = await res.json()
     }
 
@@ -196,7 +196,7 @@ export default {
       if (sort_by_price.value) params.append('sort_by_price', sort_by_price.value)
       params.append('offset', offset.value)
       params.append('limit', limit.value)
-      const res = await fetch(`${window.AppConfig.siteUrl}/products/?${params}`)
+      const res = await fetch(`${window.AppConfig.siteUrl}/products/v3/?${params}`)
       const newProducts = await res.json()
       if (append) {
         products.value.push(...newProducts)

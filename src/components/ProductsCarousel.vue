@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="mt-5">
-      <div class="d-flex justify-content-between mb-2">
+      <div v-if="discounts.length" class="d-flex justify-content-between mb-2">
         <div>
           <a href="/category?discounts=true" class="products-all-btn">
             <i class="bi bi-fire" style="color:#ff5722;"></i>
@@ -10,9 +10,9 @@
           </a>
         </div>
       </div>
-      <CarouselBlock :products="discounts" />
+      <CarouselBlock v-if="discounts.length" :products="discounts" />
       
-      <div class="d-flex justify-content-between mb-2 mt-4">
+      <div v-if="products1.length" class="d-flex justify-content-between mb-2 mt-4">
         <div>
           <a :href="categoryLink(shoesCategoryId)" class="products-all-btn">
             <!-- <i class="bi bi-bag"></i> -->
@@ -21,8 +21,8 @@
           </a>
         </div>
       </div>
-      <CarouselBlock :products="products1" />
-      <div class="d-flex justify-content-between mb-2 mt-4">
+      <CarouselBlock v-if="products1.length" :products="products1" />
+      <div v-if="products2.length" class="d-flex justify-content-between mb-2 mt-4">
         <div>
           <a :href="categoryLink(accessoriesCategoryId)" class="products-all-btn">
             <!-- <i class="bi bi-gem"></i> -->
@@ -31,8 +31,8 @@
           </a>
         </div>
       </div>
-      <CarouselBlock :products="products2" />
-      <div class="d-flex justify-content-between mb-2 mt-4">
+      <CarouselBlock v-if="products2.length" :products="products2" />
+      <div v-if="products3.length" class="d-flex justify-content-between mb-2 mt-4">
         <div>
           <a :href="categoryLink(clothesCategoryId)" class="products-all-btn">
             <!-- <i class="bi bi-person-bounding-box"></i> -->
@@ -41,7 +41,7 @@
           </a>
         </div>
       </div>
-      <CarouselBlock :products="products3" />
+      <CarouselBlock v-if="products3.length" :products="products3" />
     </div>
   </div>
 </template>
@@ -67,8 +67,8 @@ onMounted(async () => {
   const url = window.AppConfig?.siteUrl 
   try {
     const [catsRes, discountsRes] = await Promise.all([
-      fetch(`${url}/categories/`),
-      fetch(`${url}/products/?discounts=true&offset=0&limit=10`)
+      fetch(`${url}/categories/v3/`),
+      fetch(`${url}/products/v3/?discounts=true&offset=0&limit=10`)
     ])
     const categories = await catsRes.json()
     discounts.value = await discountsRes.json()
@@ -79,9 +79,9 @@ onMounted(async () => {
     clothesCategoryId.value = findId('Одежда')
 
     const [res1, res2, res3] = await Promise.all([
-      shoesCategoryId.value ? fetch(`${url}/products/?category_id=${shoesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null),
-      accessoriesCategoryId.value ? fetch(`${url}/products/?category_id=${accessoriesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null),
-      clothesCategoryId.value ? fetch(`${url}/products/?category_id=${clothesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null)
+      shoesCategoryId.value ? fetch(`${url}/products/v3/?category_id=${shoesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null),
+      accessoriesCategoryId.value ? fetch(`${url}/products/v3/?category_id=${accessoriesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null),
+      clothesCategoryId.value ? fetch(`${url}/products/v3/?category_id=${clothesCategoryId.value}&offset=0&limit=10`) : Promise.resolve(null)
     ])
 
     products1.value = res1 ? await res1.json() : []

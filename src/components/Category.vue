@@ -51,15 +51,15 @@
     <div v-if="loading" class="text-center py-5 mt-5">
       <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
     </div>
-    <div v-else class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-      <div v-for="item in categories" :key="item.category_id" class="col mt-3">
-        <router-link :to="{ path: '/category', query: { category_id: item.category_id } }" class="category-card">
+    <div v-else class="mt-3 popular-wrap">
+      <div v-for="item in popularItems" :key="item.key" class="popular-item">
+        <router-link :to="{ path: '/category', query: item.query }" class="category-card">
           <div class="category-card-inner">
             <div class="category-img mb-2">
-              <img v-if="item.image_url" :src="item.image_url" :alt="item.category_name" />
-              <i v-else class="bi bi-grid category-placeholder"></i>
+              <img v-if="item.image" :src="item.image" :alt="item.title" />
+              <i v-else :class="[item.iconClass, 'category-placeholder']"></i>
             </div>
-            <div class="category-title">{{ item.category_name }}</div>
+            <div class="category-title">{{ item.title }}</div>
           </div>
         </router-link>
       </div>
@@ -68,13 +68,57 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const categories = ref([])
 const loading = ref(true)
 
 const discounts = ref([])
 const discountsLoading = ref(true)
+const brands = ref([])
+const collections = ref([])
+const seasons = ref([])
+
+const popularItems = computed(() => {
+  const list = []
+  for (const c of categories.value) {
+    list.push({
+      key: `cat-${c.category_id}`,
+      title: c.category_name,
+      image: c.image_url,
+      query: { category_id: c.category_id },
+      iconClass: c.image_url ? null : 'bi bi-grid',
+    })
+  }
+  for (const m of brands.value) {
+    list.push({
+      key: `man-${m.manufacturer_id}`,
+      title: m.manufacturer_name,
+      image: null,
+      query: { manufacturer_id: m.manufacturer_id },
+      iconClass: 'bi bi-award',
+    })
+  }
+  for (const col of collections.value) {
+    list.push({
+      key: `col-${col.collection_id}`,
+      title: col.collection_name,
+      image: null,
+      query: { collection_id: col.collection_id },
+      iconClass: 'bi bi-collection',
+    })
+  }
+  for (const s of seasons.value) {
+    list.push({
+      key: `sea-${s.season_id}`,
+      title: s.season_name,
+      image: null,
+      query: { season_id: s.season_id },
+      iconClass: 'bi bi-calendar2-week',
+    })
+  }
+  return list
+})
 
 function formatTimeLeft(end) {
   try {
@@ -104,13 +148,24 @@ function isUrgent(end) {
 
 onMounted(async () => {
   try {
-    const res = await fetch(`${window.AppConfig.siteUrl}/categories/`)
+    const res = await fetch(`${window.AppConfig.siteUrl}/categories/v3/`)
     categories.value = await res.json()
   } catch (error) {
     console.error(error)
   } finally {
     loading.value = false
   }
+
+  try {
+    const [brandsRes, collectionsRes, seasonsRes] = await Promise.all([
+      fetch(`${window.AppConfig.siteUrl}/manufacturers/v3/`),
+      fetch(`${window.AppConfig.siteUrl}/collections/v3/`),
+      fetch(`${window.AppConfig.siteUrl}/seasons/v3/`),
+    ])
+    brands.value = await brandsRes.json()
+    collections.value = await collectionsRes.json()
+    seasons.value = await seasonsRes.json()
+  } catch (e) {}
 
   try {
     const res = await fetch(`${window.AppConfig.siteUrl}/discounts/?is_active=true`)
@@ -244,6 +299,26 @@ onMounted(async () => {
   color: #b89b7a;
   box-shadow: 0 4px 16px rgba(200,180,140,0.08);
 }
+
+/* popular section (flex) */
+.popular-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.popular-item {
+  flex: 0 1 calc(25% - 1rem);
+}
+@media (max-width: 992px) {
+  .popular-item { flex-basis: calc(33.333% - 1rem); }
+}
+@media (max-width: 768px) {
+  .popular-item { flex-basis: calc(50% - 1rem); }
+}
+@media (max-width: 480px) {
+  .popular-item { flex-basis: 100%; }
+}
+
 @media (max-width: 576px) {
   .category-card {
     padding: 16px 4px 14px 4px;
