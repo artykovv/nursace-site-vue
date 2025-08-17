@@ -25,6 +25,7 @@ import ProfileOrdersPage from './pages/ProfileOrdersPage.vue'
 import SearchPage from './pages/SearchPage.vue'
 import SupportPage from './pages/SupportPage.vue'
 import DocumentPage from './pages/DocumentPage.vue'
+import FacebookCheckoutPage from './pages/FacebookCheckoutPage.vue'
 
 const routes = [
   { path: '/', component: HomePage },
@@ -33,6 +34,7 @@ const routes = [
   { path: '/product', component: ProductPage },
   { path: '/cart', component: CartPage },
   { path: '/checkout', component: CheckoutPage },
+  { path: '/facebook/checkout', component: FacebookCheckoutPage },
   { path: '/checkout/success', component: CheckoutSuccessPage },
   { path: '/checkout/failure', component: CheckoutFailurePage },
   { path: '/login', component: LoginPage },
