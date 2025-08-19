@@ -39,6 +39,35 @@
         </div>
       </div>
 
+      <div class="d-flex align-items-center justify-content-between mb-2 mt-4">
+        <div class="d-flex align-items-center gap-2">
+          <h2 class="mt-3">Outlet</h2>
+        </div>
+      </div>
+      <div v-if="outletsLoading" class="text-center py-3">
+        <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
+      </div>
+      <div v-else-if="!outlets.length" class="alert alert-light border">Сейчас нет аутлетов</div>
+      <div v-else class="mt-2 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div v-for="o in outlets" :key="o.id" class="col mt-3">
+          <router-link :to="{ path: '/category', query: { outlet_id: o.id } }" class="category-card discount-card">
+            <div class="category-card-inner discount-card-inner">
+              <div class="category-img mb-2 position-relative discount-card-head">
+                <div class="discount-badge">{{ o.discount_percent != null ? `-${o.discount_percent}%` : 'Outlet' }}</div>
+                <i class="bi bi-tags discount-icon"></i>
+              </div>
+              <div class="discount-card-title">{{ o.name }}</div>
+              <div class="discount-card-meta" v-if="o.end_date">
+                <span class="time-chip" :class="{ urgent: isUrgent(o.end_date) }">
+                  <i class="bi bi-clock"></i>
+                  Осталось: {{ formatTimeLeft(o.end_date) }}
+                </span>
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+
       <h2 class="mt-3">Категории</h2>
       <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div v-for="item in categories" :key="item.category_id" class="col mt-3">
@@ -104,6 +133,8 @@ const seasons = ref([])
 const discounts = ref([])
 const loading = ref(true)
 const discountsLoading = ref(true)
+const outletsLoading = ref(true)
+const outlets = ref([])
 
 function formatTimeLeft(end) {
   try {
@@ -147,6 +178,13 @@ onMounted(async () => {
     discounts.value = []
   }
   discountsLoading.value = false
+
+  try {
+    outlets.value = await (await fetch(`${window.AppConfig.siteUrl}/outlets/`)).json()
+  } catch (e) {
+    outlets.value = []
+  }
+  outletsLoading.value = false
 })
 </script>
 <style scoped>

@@ -153,6 +153,7 @@ export default {
       product_size: [],
       discounts: route.query.discounts === 'true' ? true : undefined,
       discount_id: route.query.discount_id ? Number(route.query.discount_id) : undefined,
+      outlet_id: route.query.outlet_id ? Number(route.query.outlet_id) : undefined,
       // ... другие фильтры
     })
 
@@ -165,6 +166,7 @@ export default {
       if (selectedFilters.value.season_id.length) params.append('season_id', selectedFilters.value.season_id[0])
       if (selectedFilters.value.custom_category_id.length) params.append('custom_category_id', selectedFilters.value.custom_category_id[0])
       if (selectedFilters.value.discount_id) params.append('discount_id', selectedFilters.value.discount_id)
+      if (selectedFilters.value.outlet_id) params.append('outlet_id', selectedFilters.value.outlet_id)
       if (selectedFilters.value.discounts === true) params.append('discounts', 'true')
       const res = await fetch(`${window.AppConfig.siteUrl}/filters/v3/?${params}`)
       filters.value = await res.json()
