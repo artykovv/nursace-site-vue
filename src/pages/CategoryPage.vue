@@ -149,7 +149,7 @@ export default {
       season_id: route.query.season_id ? [Number(route.query.season_id)] : [],
       custom_category_id: route.query.custom_category_id ? [Number(route.query.custom_category_id)] : [],
       color_id: [],
-      sex_id: [],
+      sex_id: route.query.sex_id ? [Number(route.query.sex_id)] : [1],
       product_size: [],
       discounts: route.query.discounts === 'true' ? true : undefined,
       discount_id: route.query.discount_id ? Number(route.query.discount_id) : undefined,

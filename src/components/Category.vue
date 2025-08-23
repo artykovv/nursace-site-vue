@@ -48,6 +48,25 @@
       </div>
     </div>
 
+    <!-- Sexes section -->
+    <div class="mt-4" v-if="visibleSexes.length">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <!-- <h3 class="m-0 discounts-title">Пол</h3> -->
+      </div>
+      <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div v-for="sex in visibleSexes" :key="sex.sex_id" class="col mt-3">
+          <router-link :to="{ path: '/category', query: { sex_id: sex.sex_id } }" class="category-card">
+            <div class="category-card-inner">
+              <div class="category-img mb-2">
+                <i :class="[sex.sex_name === 'Мужской' ? 'bi bi-gender-male' : (sex.sex_name === 'Женский' ? 'bi bi-gender-female' : 'bi bi-people'), 'category-placeholder']"></i>
+              </div>
+              <div class="category-title">{{ sex.sex_name }}</div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </div>
+
     <!-- Outlet section -->
     <div class="mt-4">
       <div class="d-flex align-items-center gap-2 mb-2">
@@ -113,6 +132,7 @@ const outletsLoading = ref(true)
 const brands = ref([])
 const collections = ref([])
 const seasons = ref([])
+const sexes = ref([])
 
 const popularItems = computed(() => {
   const list = []
@@ -155,6 +175,10 @@ const popularItems = computed(() => {
   return list
 })
 
+const visibleSexes = computed(() =>
+  sexes.value.filter(s => s.sex_name !== 'Не определен')
+)
+
 function formatTimeLeft(end) {
   try {
     const endDate = new Date(end)
@@ -192,14 +216,16 @@ onMounted(async () => {
   }
 
   try {
-    const [brandsRes, collectionsRes, seasonsRes] = await Promise.all([
+    const [brandsRes, collectionsRes, seasonsRes, sexesRes] = await Promise.all([
       fetch(`${window.AppConfig.siteUrl}/manufacturers/v3/`),
       fetch(`${window.AppConfig.siteUrl}/collections/v3/`),
       fetch(`${window.AppConfig.siteUrl}/seasons/v3/`),
+      fetch(`${window.AppConfig.siteUrl}/sexes/v3/`),
     ])
     brands.value = await brandsRes.json()
     collections.value = await collectionsRes.json()
     seasons.value = await seasonsRes.json()
+    sexes.value = await sexesRes.json()
   } catch (e) {}
 
   try {
@@ -360,7 +386,7 @@ onMounted(async () => {
   .popular-item { flex-basis: calc(50% - 1rem); }
 }
 @media (max-width: 480px) {
-  .popular-item { flex-basis: 100%; }
+  .popular-item { flex-basis: calc(50% - 1rem); }
 }
 
 @media (max-width: 576px) {
