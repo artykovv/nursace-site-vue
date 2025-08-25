@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 id="title">Служба поддержки</h1>
+    <h1 id="title">{{ supportData.title || 'Служба поддержки' }}</h1>
     <div class="content mt-5">
       <p id="content">Работаем ежедневно с 09:00 до 20:00.</p>
       <div class="card p-3">
@@ -12,14 +12,14 @@
             <path d="M9 6l6 6-6 6"></path>
           </svg>
         </a>
-        <a href="" class="mobile-menu-btn mb-2">
+        <a :href="supportData.whatsapp || ''" class="mobile-menu-btn mb-2" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-whatsapp"></i>
           <span>Поддержка в WhatsApp</span>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 6l6 6-6 6"></path>
           </svg>
         </a>
-        <a href="" class="mobile-menu-btn">
+        <a :href="`tel:${supportData.number || ''}`" class="mobile-menu-btn">
           <i class="bi bi-telephone"></i>
           <span>Позвонить в поддержку</span>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -32,10 +32,39 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-onMounted(() => { document.title = 'Служба поддержки | Nursace' })
+import { ref, onMounted } from 'vue'
 
-// Нет логики, только разметка
+const supportData = ref({
+  title: '',
+  number: '',
+  whatsapp: ''
+})
+
+const fetchSupportData = async () => {
+  try {
+    const response = await fetch(`${window.AppConfig.siteUrl}/documents/9`)
+    if (response.ok) {
+      const data = await response.json()
+      supportData.value.title = data.title
+      
+      // Парсим content JSON
+      try {
+        const contentData = JSON.parse(data.content)
+        supportData.value.number = contentData.number
+        supportData.value.whatsapp = contentData.whatsapp
+      } catch (parseError) {
+        console.error('Ошибка парсинга content:', parseError)
+      }
+    }
+  } catch (error) {
+    console.error('Ошибка при получении данных поддержки:', error)
+  }
+}
+
+onMounted(() => { 
+  document.title = 'Служба поддержки | Nursace'
+  fetchSupportData()
+})
 </script>
 
 <style scoped>
