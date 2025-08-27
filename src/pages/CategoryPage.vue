@@ -168,6 +168,7 @@ export default {
       if (selectedFilters.value.discount_id) params.append('discount_id', selectedFilters.value.discount_id)
       if (selectedFilters.value.outlet_id) params.append('outlet_id', selectedFilters.value.outlet_id)
       if (selectedFilters.value.discounts === true) params.append('discounts', 'true')
+      if (selectedFilters.value.sex_id) params.append('sex_id', selectedFilters.value.sex_id[0])
       const res = await fetch(`${window.AppConfig.siteUrl}/filters/v3/?${params}`)
       filters.value = await res.json()
     }
