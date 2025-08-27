@@ -82,6 +82,19 @@
           </router-link>
         </div>
       </div>
+      <h2 class="mt-3">Пол</h2>
+      <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div v-for="item in sexes" :key="item.sex_id" class="col mt-3">
+          <router-link :to="{ path: '/category', query: { sex_id: item.sex_id } }" class="category-card">
+            <div class="category-card-inner">
+              <div class="category-img mb-2">
+                <i class="bi bi-gender-ambiguous category-placeholder"></i>
+              </div>
+              <div class="category-title">{{ item.sex_name }}</div>
+            </div>
+          </router-link>
+        </div>
+      </div>
       <h2 class="mt-3">Бренды</h2>
       <div class="mt-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div v-for="item in brands" :key="item.manufacturer_id" class="col mt-3">
@@ -121,6 +134,7 @@
           </router-link>
         </div>
       </div>
+      
     </div>
   </div>
 </template>
@@ -130,6 +144,7 @@ const categories = ref([])
 const brands = ref([])
 const collections = ref([])
 const seasons = ref([])
+const sexes = ref([])
 const discounts = ref([])
 const loading = ref(true)
 const discountsLoading = ref(true)
@@ -169,6 +184,7 @@ onMounted(async () => {
     brands.value = await (await fetch(`${window.AppConfig.siteUrl}/manufacturers/v3/`)).json()
     collections.value = await (await fetch(`${window.AppConfig.siteUrl}/collections/v3/`)).json()
     seasons.value = await (await fetch(`${window.AppConfig.siteUrl}/seasons/v3/`)).json()
+    sexes.value = await (await fetch(`${window.AppConfig.siteUrl}/sexes/v3/`)).json()
   } catch (e) {}
   loading.value = false
 
