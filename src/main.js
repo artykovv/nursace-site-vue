@@ -46,9 +46,17 @@ const routes = [
   { path: '/docs/support', component: SupportPage },
   { path: '/docs/:slug', component: DocumentPage }
 ]
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// Глобальный навигационный хук для прокрутки в верх страницы
+router.beforeEach((to, from, next) => {
+  // Прокручиваем в верх страницы при смене маршрута
+  window.scrollTo(0, 0)
+  next()
 })
 
 createApp(App).use(router).mount('#app')
